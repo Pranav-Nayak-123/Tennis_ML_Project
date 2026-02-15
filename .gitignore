@@ -22,6 +22,8 @@ Output_Videos/
 Tracker_Stubs/
 Training/
 runs/
+!Input_Videos/.gitkeep
+!Output_Videos/.gitkeep
 
 # Optional local notes/logs
 *.log
