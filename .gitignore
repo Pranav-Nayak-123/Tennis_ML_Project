@@ -1,0 +1,27 @@
+# Python cache and virtual env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Large model weights and checkpoints
+*.pt
+*.pth
+*.onnx
+*.engine
+*.pkl
+
+# Data and artifacts
+Input_Videos/
+Output_Videos/
+Tracker_Stubs/
+Training/
+runs/
+
+# Optional local notes/logs
+*.log
