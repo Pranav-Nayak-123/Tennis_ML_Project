@@ -1,54 +1,69 @@
 # Tennis ML Project
 
-End-to-end tennis video analysis pipeline with:
-- Player tracking (`YOLOv8`)
-- Ball detection + interpolation
-- Court keypoint detection (`ResNet50`)
-- Mini-court overlay rendering
-- Annotated output video generation
-- Rally analytics:
+End-to-end tennis video analytics pipeline that detects players, tracks the ball, maps movement to a mini-court, and exports rally-level insights.
+
+## What This Project Does
+- Tracks players with YOLO-based player detection/tracking.
+- Detects and interpolates ball positions frame-by-frame.
+- Detects court keypoints with a ResNet-based model.
+- Projects players and ball onto a stabilized mini-court overlay.
+- Adds analytics overlays:
   - Shot-type inference (`serve`, `forehand`, `backhand`)
-  - Ball speed estimation (km/h)
-  - Rally stats overlay
+  - Ball speed estimation (`km/h`)
+  - Rally stats panel
   - Point-outcome inference
-  - Auto highlight clip export
+- Exports highlight clips from top rallies.
+- Exports structured analytics files (`CSV` + `JSON`).
+
+## Demo Screenshots
+### Analytics Overlay + Mini-Court
+![Demo Frame 1](docs/images/demo_frame_1.jpg)
+
+### Rally / Shot / Speed Visuals
+![Demo Frame 2](docs/images/demo_frame_2.jpg)
+
+### Output View During Play
+![Demo Frame 3](docs/images/demo_frame_3.jpg)
 
 ## Project Structure
-- `main.py`: Pipeline entrypoint
-- `Trackers/`: Player and ball tracking modules
-- `Court_Line_Detector/`: Court keypoint model inference
-- `Mini_court/`: Court overlay drawing
-- `utils/`: Video IO, bbox helpers, metric conversions
-- `Models/`: Trained model artifacts
-- `Input_Videos/`: Source videos
-- `Output_Videos/`: Rendered outputs
-- `Tracker_Stubs/`: Optional cached detections
+- `main.py`: Main pipeline entrypoint.
+- `Trackers/`: Player and ball trackers.
+- `Court_Line_Detector/`: Court keypoint model inference.
+- `Mini_court/`: Mini-court rendering and projection logic.
+- `utils/analytics.py`: Rally analysis, stats overlay, highlights, exports.
+- `utils/video_utils.py`: Video IO helpers.
+- `Models/`: Model artifacts (`.pt`, `.pth`).
+- `Input_Videos/`: Input videos (not tracked in git).
+- `Output_Videos/`: Generated outputs (not tracked in git).
 
 ## Setup
-```bash
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
+pip install torch==2.3.0 torchvision==0.18.0
+pip install "numpy<2" "opencv-python<4.12"
 ```
 
-## Run
-```bash
-python main.py --input-video Input_Videos/input_video.mp4 --output-video Output_Videos/output_video.avi
+## Demo: Run the Full Analytics Pipeline
+```powershell
+python main.py --use-stubs --input-video Input_Videos/input_video.mp4 --output-video Output_Videos/output_video_analytics.mp4 --events-csv Output_Videos/analysis_events.csv --summary-json Output_Videos/analysis_summary.json --highlights-dir Output_Videos/highlights
 ```
 
-Use cached detections:
-```bash
-python main.py --use-stubs --player-stub Tracker_Stubs/player_detections.pkl --ball-stub Tracker_Stubs/ball_detections.pkl
-```
+## Output Artifacts
+Running the demo command generates:
+- `Output_Videos/output_video_analytics.mp4`
+- `Output_Videos/analysis_events.csv`
+- `Output_Videos/analysis_summary.json`
+- `Output_Videos/highlights/` (top rally clips)
 
-Run with analytics outputs:
-```bash
-python main.py --use-stubs --output-video Output_Videos/output_video_analytics.mp4 --events-csv Output_Videos/analysis_events.csv --summary-json Output_Videos/analysis_summary.json --highlights-dir Output_Videos/highlights
-```
+## Useful Flags
+- `--use-stubs`: Use cached tracker outputs for faster runs.
+- `--disable-highlights`: Skip highlight generation.
+- `--disable-analytics-overlay`: Keep core detections without analytics panel.
+- `--fps`: Override FPS used in analytics calculations.
 
 ## Notes
-- Ensure model files exist:
-  - `yolov8x.pt`
-  - `Models/last.pt`
-  - `Models/keypoints_model.pth`
-- For first runs, omit `--use-stubs` to generate fresh detections.
+- Large assets (models, raw videos, generated outputs) are intentionally excluded from git.
+- This project is optimized for practical analysis workflows and iterative tuning.
