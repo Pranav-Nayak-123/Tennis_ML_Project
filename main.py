@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 
 from utils.video_utils import read_video, save_video
+from utils.analytics import RallyAnalyzer
 from Trackers import PlayerTracker, BallTracker
 from Court_Line_Detector import CourtLineDetector
 from Mini_court import MiniCourt
@@ -16,6 +17,12 @@ def parse_args():
     parser.add_argument("--court-model", default="Models/keypoints_model.pth")
     parser.add_argument("--player-stub", default="Tracker_Stubs/player_detections.pkl")
     parser.add_argument("--ball-stub", default="Tracker_Stubs/ball_detections.pkl")
+    parser.add_argument("--fps", type=int, default=24)
+    parser.add_argument("--events-csv", default="Output_Videos/analysis_events.csv")
+    parser.add_argument("--summary-json", default="Output_Videos/analysis_summary.json")
+    parser.add_argument("--highlights-dir", default="Output_Videos/highlights")
+    parser.add_argument("--disable-highlights", action="store_true")
+    parser.add_argument("--disable-analytics-overlay", action="store_true")
     parser.add_argument(
         "--use-stubs",
         action="store_true",
@@ -69,6 +76,21 @@ def main():
         ball_detections=ball_detections,
         court_keypoints=court_keypoints,
     )
+
+    analyzer = RallyAnalyzer(fps=args.fps)
+    analysis = analyzer.analyze(
+        video_frames,
+        player_detections,
+        ball_detections,
+        mini_court,
+        court_keypoints,
+    )
+    if not args.disable_analytics_overlay:
+        output_video_frames = analyzer.draw_overlay(output_video_frames, analysis)
+    analyzer.export_events_csv(analysis, args.events_csv)
+    analyzer.export_summary_json(analysis, args.summary_json)
+    if not args.disable_highlights:
+        analyzer.export_highlight_clips(video_frames, analysis, args.highlights_dir)
 
     for i, frame in enumerate(output_video_frames):
         cv2.putText(

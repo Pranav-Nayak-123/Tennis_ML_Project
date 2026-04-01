@@ -6,6 +6,12 @@ End-to-end tennis video analysis pipeline with:
 - Court keypoint detection (`ResNet50`)
 - Mini-court overlay rendering
 - Annotated output video generation
+- Rally analytics:
+  - Shot-type inference (`serve`, `forehand`, `backhand`)
+  - Ball speed estimation (km/h)
+  - Rally stats overlay
+  - Point-outcome inference
+  - Auto highlight clip export
 
 ## Project Structure
 - `main.py`: Pipeline entrypoint
@@ -33,6 +39,11 @@ python main.py --input-video Input_Videos/input_video.mp4 --output-video Output_
 Use cached detections:
 ```bash
 python main.py --use-stubs --player-stub Tracker_Stubs/player_detections.pkl --ball-stub Tracker_Stubs/ball_detections.pkl
+```
+
+Run with analytics outputs:
+```bash
+python main.py --use-stubs --output-video Output_Videos/output_video_analytics.mp4 --events-csv Output_Videos/analysis_events.csv --summary-json Output_Videos/analysis_summary.json --highlights-dir Output_Videos/highlights
 ```
 
 ## Notes
