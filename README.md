@@ -67,3 +67,4 @@ Running the demo command generates:
 ## Notes
 - Large assets (models, raw videos, generated outputs) are intentionally excluded from git.
 - This project is optimized for practical analysis workflows and iterative tuning.
+- An implementation and extension of Code in a Jiffy's youtube video on Tennis Analysis. https://youtu.be/L23oIHZE14w?si=lqgqniwhEIZnzZN-
